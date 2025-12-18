@@ -1,0 +1,264 @@
+openapi: 3.0.0
+info:
+  title: RAG Question Answering System API
+  description: API for asking questions about book content and receiving answers based on the provided material
+  version: 1.0.0
+paths:
+  /ask:
+    post:
+      summary: Ask a question about the full book content
+      description: Submit a question to be answered based on the entire book content
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AskRequest'
+      responses:
+        '200':
+          description: Successful response with an answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AskResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /ask-from-selection:
+    post:
+      summary: Ask a question about selected text
+      description: Submit a question to be answered based on specific selected text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AskFromSelectionRequest'
+      responses:
+        '200':
+          description: Successful response with an answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AskResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/ask:
+    post:
+      summary: Ask a question about the full book content (v1)
+      description: Submit a question to be answered based on the entire book content (v1 API)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AskRequest'
+      responses:
+        '200':
+          description: Successful response with an answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AskResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/ask-from-selection:
+    post:
+      summary: Ask a question about selected text (v1)
+      description: Submit a question to be answered based on specific selected text (v1 API)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AskFromSelectionRequest'
+      responses:
+        '200':
+          description: Successful response with an answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AskResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Check the health status of the API
+      responses:
+        '200':
+          description: Health check successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  api_prefix:
+                    type: string
+                    example: "/v1"
+
+components:
+  schemas:
+    AskRequest:
+      type: object
+      required:
+        - question
+      properties:
+        question:
+          type: string
+          description: The question to be answered
+          minLength: 3
+          maxLength: 1000
+          example: "What are the key principles of humanoid locomotion?"
+        session_id:
+          type: string
+          description: Optional session identifier
+          example: "session-12345"
+          nullable: true
+
+    AskFromSelectionRequest:
+      type: object
+      required:
+        - question
+        - selected_text
+      properties:
+        question:
+          type: string
+          description: The question to be answered
+          minLength: 3
+          maxLength: 1000
+          example: "How does this relate to ZMP?"
+        selected_text:
+          type: string
+          description: The specific text to focus on when answering
+          minLength: 1
+          maxLength: 5000
+          example: "The Zero-Moment Point (ZMP) is a crucial concept in humanoid robotics..."
+        session_id:
+          type: string
+          description: Optional session identifier
+          example: "session-12345"
+          nullable: true
+
+    AskResponse:
+      type: object
+      required:
+        - id
+        - answer
+        - confidence_score
+        - source_citations
+        - created_at
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this response
+          example: "response-67890"
+        answer:
+          type: string
+          description: The answer to the question
+          example: "Humanoid locomotion relies on maintaining the Zero-Moment Point (ZMP) within the support polygon..."
+        confidence_score:
+          type: number
+          format: float
+          description: Confidence level in the answer (0.0 to 1.0)
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.85
+        source_citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceCitation'
+        created_at:
+          type: string
+          description: ISO timestamp of when the answer was generated
+          example: "2025-12-15T10:30:00Z"
+
+    SourceCitation:
+      type: object
+      properties:
+        section:
+          type: string
+          description: Name or identifier of the source section
+          example: "Chapter 3: Locomotion"
+        text:
+          type: string
+          description: Excerpt of the source text
+          example: "The Zero-Moment Point (ZMP) is a crucial concept in humanoid robotics..."
+        page:
+          type: integer
+          description: Page number in the source material
+          example: 45
+          nullable: true
+
+    ErrorDetail:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          example: "QUERY_TOO_SHORT"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Question must be at least 3 characters long"
+        details:
+          type: string
+          description: Additional error details
+          example: "The provided question 'Hi' is only 2 characters"
+          nullable: true
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorDetail'

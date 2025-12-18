@@ -1,0 +1,507 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. Modern green theme (#2e8555) */
+:root {
+  --ifm-color-primary: #2e8555;
+  --ifm-color-primary-dark: #29784c;
+  --ifm-color-primary-darker: #277148;
+  --ifm-color-primary-darkest: #205d3b;
+  --ifm-color-primary-light: #33925d;
+  --ifm-color-primary-lighter: #359962;
+  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+
+  /* Clean spacing and typography */
+  --ifm-spacing-horizontal: 1.5rem;
+  --ifm-spacing-vertical: 1.5rem;
+  --ifm-global-radius: 6px;
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+  --ifm-font-size-base: 16px;
+  --ifm-line-height-base: 1.7;
+
+  /* Clean card and container styling */
+  --ifm-card-background-color: #fff;
+  --ifm-card-border-radius: 8px;
+  --ifm-card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: #21af90;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+
+  /* Dark mode specific variables */
+  --ifm-card-background-color: #242526;
+  --ifm-background-color: #18191a;
+  --ifm-background-surface-color: #242526;
+}
+
+/* Custom styles for textbook */
+.textbook-content {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 2rem;
+  line-height: 1.7;
+}
+
+.chapter-intro {
+  background-color: #f9fdfa;
+  border-left: 4px solid #2e8555;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 0 4px 4px 0;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.learning-outcomes {
+  background-color: #e8f8f2;
+  border: 1px solid #c6f0e0;
+  border-radius: 6px;
+  padding: 1.2rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.knowledge-check {
+  background-color: #fff9e6;
+  border: 1px solid #ffeec2;
+  border-radius: 6px;
+  padding: 1.2rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.experiment-box {
+  border: 2px solid #82c5d5;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  background-color: #f9fcfd;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.safety-warning {
+  border: 2px solid #ff6b6b;
+  background-color: #ffefef;
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.safety-warning::before {
+  content: "⚠️ SAFETY ALERT: ";
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+/* Improved typography and spacing */
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.markdown p {
+  margin-bottom: 1.2rem;
+}
+
+.markdown ul,
+.markdown ol {
+  margin-bottom: 1.2rem;
+  padding-left: 1.5rem;
+}
+
+/* Enhanced code blocks */
+.prism-code {
+  border-radius: 6px;
+  font-size: 0.9rem;
+  padding: 1.2rem;
+}
+
+/* Improved card layouts */
+.card {
+  border: none;
+  box-shadow: var(--ifm-global-shadow-lw);
+  transition: box-shadow 0.3s ease;
+  border-radius: var(--ifm-global-radius);
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Button styling */
+.button {
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+/* Improved table styling */
+.markdown table {
+  display: table;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.markdown table th,
+.markdown table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid var(--ifm-table-border-color);
+}
+
+/* Sidebar improvements */
+.menu {
+  font-size: 0.9rem;
+}
+
+/* Footer improvements */
+.footer {
+  padding: 3rem 0 2rem 0;
+}
+
+/* Improved navbar */
+.navbar {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Urdu text specific styling */
+.urdu-text {
+  font-family: 'Jameel Noori Nastaleeq', 'Urdu Typesetting', serif;
+  direction: rtl;
+  text-align: right;
+  line-height: 2;
+}
+
+/* Chatbot component styles */
+.chatbot-container {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chatbot-container[data-theme="dark"] {
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+.chatbot-header {
+  background-color: var(--ifm-color-primary);
+  color: white;
+  padding: 0.75rem 1rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chatbot-messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background-color: var(--ifm-background-color);
+}
+
+.welcome-message {
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  font-style: italic;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.message {
+  max-width: 80%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  position: relative;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.user-message {
+  align-self: flex-end;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border-bottom-right-radius: 2px;
+}
+
+.bot-message {
+  align-self: flex-start;
+  background-color: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-bottom-left-radius: 2px;
+}
+
+[data-theme="dark"] .bot-message {
+  background-color: var(--ifm-color-emphasis-200);
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.typing-indicator span {
+  height: 8px;
+  width: 8px;
+  background-color: var(--ifm-color-emphasis-600);
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 2px;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+}
+
+.sources-details {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.sources-details[open] {
+  padding-bottom: 0.5rem;
+}
+
+.sources-details summary {
+  cursor: pointer;
+  font-weight: bold;
+  outline: none;
+}
+
+.sources-list {
+  padding-left: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+.source-item {
+  margin-bottom: 0.5rem;
+}
+
+.source-item p {
+  margin: 0.25rem 0;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.confidence-score {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 0.25rem;
+  text-align: right;
+}
+
+.chatbot-input-form {
+  display: flex;
+  padding: 1rem;
+  background-color: var(--ifm-color-emphasis-100);
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+  gap: 0.5rem;
+}
+
+[data-theme="dark"] .chatbot-input-form {
+  background-color: var(--ifm-color-emphasis-200);
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+.chatbot-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 40px;
+  max-height: 100px;
+  font-family: inherit;
+}
+
+.chatbot-input:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 2px rgba(46, 133, 85, 0.2);
+}
+
+.chatbot-send-button {
+  padding: 0.75rem 1.25rem;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.chatbot-send-button:disabled {
+  background-color: var(--ifm-color-emphasis-400);
+  cursor: not-allowed;
+}
+
+/* Floating Chatbot Styles */
+.floating-chatbot {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.floating-chatbot.open {
+  bottom: 20px;
+  right: 20px;
+}
+
+.chatbot-toggle-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.chatbot-toggle-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.chatbot-toggle-button[data-theme="dark"] {
+  background-color: var(--ifm-color-primary);
+}
+
+.chatbot-window {
+  width: 350px;
+  height: 500px;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 40px);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: var(--ifm-background-color);
+  margin-bottom: 15px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.floating-chatbot.open .chatbot-window {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chatbot-window[data-theme="dark"] {
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+@media (max-width: 768px) {
+  .chatbot-window {
+    width: calc(100vw - 40px);
+    height: 50vh;
+  }
+}
+
+/* Navbar Chatbot Button */
+.chatbot-navbar-button {
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.chatbot-navbar-button:hover {
+  background-color: var(--ifm-color-primary-dark);
+}
+
+.navbar .chatbot-navbar-button {
+  height: 30px;
+}
+
+/* Hide the chatbot button on mobile to avoid clutter */
+@media (max-width: 996px) {
+  .chatbot-navbar-button {
+    display: none;
+  }
+}
+
+/* Button to open floating chatbot from regular chatbot */
+.open-floating-chatbot-btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+}
+
+.open-floating-chatbot-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}

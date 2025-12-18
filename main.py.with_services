@@ -1,0 +1,215 @@
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Optional
+import uuid
+import time
+import logging
+from datetime import datetime
+
+# For Qdrant integration
+from qdrant_client import QdrantClient
+from qdrant_client.http import models
+import cohere
+
+from backend_config import settings
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(title="Book Chatbot API", version="1.0.0")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace with specific domains
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Request and Response models
+class AskRequest(BaseModel):
+    question: str
+    session_id: Optional[str] = None
+
+class SourceCitation(BaseModel):
+    section: str
+    text: str
+    page: Optional[int] = None
+
+class AskResponse(BaseModel):
+    id: str
+    answer: str
+    confidence_score: float
+    source_citations: List[SourceCitation]
+    created_at: str
+
+# Initialize clients
+qdrant_client = QdrantClient(
+    url=settings.QDRANT_HOST,
+    port=int(settings.QDRANT_PORT),
+    api_key=settings.QDRANT_API_KEY,
+)
+
+# Initialize Cohere client
+if settings.COHERE_API_KEY:
+    cohere_client = cohere.Client(settings.COHERE_API_KEY)
+    use_cohere = True
+else:
+    logger.warning("COHERE_API_KEY not set. Using placeholder responses only.")
+    use_cohere = False
+
+def get_embedding(text: str) -> List[float]:
+    """Generate embedding for text using Cohere"""
+    if use_cohere:
+        try:
+            response = cohere_client.embed(
+                texts=[text],
+                model="embed-english-v3.0",
+                input_type="search_query"
+            )
+            return response.embeddings[0]
+        except Exception as e:
+            logger.error(f"Error generating embedding: {e}")
+            # Return placeholder embedding
+            return [0.1] * 1024
+    else:
+        # Placeholder embedding
+        return [0.1] * 1024
+
+def search_qdrant(query_embedding: List[float], limit: int = 5) -> List[dict]:
+    """Search Qdrant collection for similar content"""
+    try:
+        # Perform search in Qdrant
+        search_results = qdrant_client.search(
+            collection_name=settings.QDRANT_COLLECTION_NAME,
+            query_vector=query_embedding,
+            limit=limit,
+            with_payload=True
+        )
+        
+        # Format results
+        results = []
+        for result in search_results:
+            results.append({
+                "text": result.payload.get("text", ""),
+                "metadata": result.payload.get("metadata", {}),
+                "score": result.score
+            })
+        
+        logger.info(f"Found {len(results)} results from Qdrant")
+        return results
+    except Exception as e:
+        logger.error(f"Error searching Qdrant: {e}")
+        return []
+
+def generate_answer(context: str, question: str) -> str:
+    """Generate answer using Cohere based on context and question"""
+    if use_cohere:
+        try:
+            prompt = f"""
+            Based on the following context, please answer the question.
+            If the answer is not available in the context, please say so clearly.
+
+            Context:
+            {context}
+
+            Question: {question}
+
+            Answer:
+            """
+            
+            response = cohere_client.generate(
+                model='command-r-plus',
+                prompt=prompt,
+                max_tokens=500,
+                temperature=0.3
+            )
+            
+            return response.generations[0].text.strip()
+        except Exception as e:
+            logger.error(f"Error generating answer with Cohere: {e}")
+            return f"Based on the Physical AI & Humanoid Robotics textbook: I couldn't generate a specific answer, but this topic is covered in the book."
+    else:
+        # Return placeholder answer based on keywords in question
+        question_lower = question.lower()
+        
+        if "locomotion" in question_lower or "walk" in question_lower or "move" in question_lower:
+            return "Humanoid robots typically use dynamic walking algorithms that balance on two legs. The Zero-Moment Point (ZMP) is crucial for maintaining balance during locomotion, ensuring the robot's center of mass remains stable."
+        elif "perception" in question_lower or "see" in question_lower or "sensor" in question_lower:
+            return "Perception in humanoid robots involves fusing data from multiple sensors including cameras, LIDAR, IMUs, and force/torque sensors. Computer vision algorithms enable object recognition and scene understanding."
+        elif "control" in question_lower or "balance" in question_lower or "stability" in question_lower:
+            return "Control systems in humanoid robots often use hierarchical control architectures. These include high-level planning, mid-level trajectory generation, and low-level motor control to maintain balance and execute tasks."
+        elif "cognition" in question_lower or "learning" in question_lower or "ai" in question_lower:
+            return "Cognitive systems in humanoid robots integrate perception, reasoning, and action. Machine learning algorithms, particularly reinforcement learning and neural networks, enable adaptive behaviors and decision-making."
+        else:
+            return f"Based on the Physical AI & Humanoid Robotics textbook, the topic '{question}' covers fundamental principles of humanoid robot design and control. For detailed information, please refer to the specific chapters in the book."
+
+@app.get("/")
+def read_root():
+    return {"message": "Book Chatbot API", "version": "1.0.0"}
+
+@app.post("/ask", response_model=AskResponse)
+async def ask_endpoint(request: AskRequest):
+    logger.info(f"Received question: {request.question}")
+    
+    # Generate a unique ID for this response
+    response_id = str(uuid.uuid4())
+    
+    # Get embedding for the question
+    question_embedding = get_embedding(request.question)
+    
+    # Search Qdrant for relevant content
+    search_results = search_qdrant(question_embedding, limit=5)
+    
+    # Prepare context from search results
+    context_parts = []
+    source_citations = []
+    
+    for result in search_results:
+        text = result["text"]
+        metadata = result["metadata"]
+        
+        context_parts.append(text)
+        
+        # Create citation
+        citation = SourceCitation(
+            section=metadata.get("section", "Unknown"),
+            text=text[:200] + "..." if len(text) > 200 else text,
+            page=metadata.get("page")
+        )
+        source_citations.append(citation)
+    
+    # Combine context
+    context = "\n\n".join(context_parts)
+    
+    # Generate answer
+    answer = generate_answer(context, request.question)
+    
+    # Calculate confidence score based on search results
+    if search_results:
+        # Use the highest score from search results as a base confidence
+        max_score = max([r['score'] for r in search_results])
+        confidence_score = min(max_score, 1.0)  # Ensure it's between 0 and 1
+    else:
+        # If no context found, return with low confidence
+        answer = "I couldn't find specific information about this topic in the book. Please check the relevant chapters."
+        confidence_score = 0.1
+    
+    # Create the response
+    response = AskResponse(
+        id=response_id,
+        answer=answer,
+        confidence_score=confidence_score,
+        source_citations=source_citations,
+        created_at=datetime.utcnow().isoformat()
+    )
+    
+    logger.info(f"Returning answer with confidence: {confidence_score}")
+    return response
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
